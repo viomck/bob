@@ -1,0 +1,5 @@
+/target
+/.idea
+bob.iml
+shas.dat
+.env
