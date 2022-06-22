@@ -61,7 +61,7 @@ async fn main() {
         }
 
         // 1 req per min is max github unauthenticated amount.  give some buffer
-        thread::sleep(Duration::from_secs(5));
+        thread::sleep(Duration::from_secs(60));
     }
 }
 

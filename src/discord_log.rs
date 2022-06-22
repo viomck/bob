@@ -28,6 +28,13 @@ lazy_static!(
 
 pub async fn log_result(text: &str) -> serenity::Result<()> {
     eprintln!("{}", &text);
+
+    let text = if text.len() > 2000 {
+        text.get(0..2000).unwrap()
+    } else {
+        text
+    };
+
     let value = json!({ "content": &text });
     let map = value.as_object().unwrap();
     CLIENT.execute_webhook(get_webhook_id(), &get_webhook_token(), true, &map)
