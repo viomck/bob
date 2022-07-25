@@ -36,7 +36,13 @@ async fn log_result(text: &str) -> serenity::Result<()> {
         text
     };
 
-    let value = json!({ "content": &text });
+    let content = format!(
+        "[`{}`] {}",
+        gethostname().to_str().unwrap_or("unknown"),
+        &text
+    );
+
+    let value = json!({ "content": content });
     let map = value.as_object().unwrap();
     CLIENT
         .execute_webhook(get_webhook_id(), &get_webhook_token(), true, &map)
@@ -51,12 +57,7 @@ pub(crate) async fn log(text: &str) {
 }
 
 pub(crate) async fn hello_world() {
-    log_result(&format!(
-        "INFO I am awake! ({})",
-        gethostname().to_str().unwrap()
-    ))
-    .await
-    .unwrap();
+    log_result("INFO I am awake!").await.unwrap();
 }
 
 fn get_webhook_id() -> u64 {
