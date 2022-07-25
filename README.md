@@ -18,14 +18,16 @@ i could just use github actions to build docker images for amd64 but this
 sounded miles more fun to make.
 
 ## config (env)
-| name                  | what is it                   | default      |
-|-----------------------|------------------------------|--------------|
-| WATCH_USERS           | users to watch               | None (panic) |
-| DOCKER_USERNAME       | docker registry username     | None (panic) |
-| DOCKER_TOKEN          | docker registry token        | None (panic) |
-| GITHUB_TOKEN          | github personal access token | None (panic) |
-| DISCORD_WEBHOOK_ID    | id of discord webhook        | None (panic) |
-| DISCORD_WEBHOOK_TOKEN | token of discord webhook     | None (panic) |
+| name                  | what is it                                               | default         |
+|-----------------------|----------------------------------------------------------|-----------------|
+| WATCH_USERS           | users to watch                                           | None (panic)    |
+| DOCKER_USERNAME       | docker registry username                                 | None (panic)    |
+| DOCKER_TOKEN          | docker registry token                                    | None (panic)    |
+| GITHUB_TOKEN          | github personal access token                             | None (panic)    |
+| DISCORD_WEBHOOK_ID    | id of discord webhook                                    | None (panic)    |
+| DISCORD_WEBHOOK_TOKEN | token of discord webhook                                 | None (panic)    |
+| WEBHOOK_TOKEN         | token for webhook                                        | None (disabled) |
+| WEBHOOK_URLS          | comma-delim'd URL to send info to after successful build | None (disabled) | 
 
 ## license
 see [LICENSE](LICENSE)

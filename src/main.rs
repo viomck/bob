@@ -18,11 +18,13 @@ mod discord_log;
 mod docker;
 mod github;
 mod store;
+mod webhook;
 
 #[macro_use]
 extern crate lazy_static;
 
 use crate::github::{GitHub, GitHubInfo};
+use crate::webhook::WebHook;
 use std::fs::File;
 use std::path::Path;
 use std::time::Duration;
@@ -43,21 +45,25 @@ async fn main() {
     let gh = GitHub::init();
     gh.ensure_config().await;
 
-    println!("INFO Checking Discord Log config");
-    discord_log::hello_world().await;
-
     println!("INFO Initializing store");
     store::ensure_store_exists();
+
+    println!("INFO Initializing webhooks");
+    let wh = webhook::WebHook::new();
+
+    println!("INFO Checking Discord Log config");
+    discord_log::hello_world().await;
 
     loop {
         println!("INFO Checking users...");
 
-        for ghi in gh.get_watched_repo_info()
+        for ghi in gh
+            .get_watched_repo_info()
             .await
             .into_iter()
             .filter(store::is_newer_than_stored_sha)
         {
-            process(ghi).await;
+            process(ghi, &wh).await;
         }
 
         // 1 req per min is max github unauthenticated amount.  give some buffer
@@ -65,11 +71,12 @@ async fn main() {
     }
 }
 
-async fn process(ghi: GitHubInfo) {
+async fn process(ghi: GitHubInfo, wh: &WebHook) {
     discord_log::log(&format!(
         "INFO Going on {}/{}!",
         ghi.repo_owner, ghi.repo_name
-    )).await;
+    ))
+    .await;
 
     let repo_path = format!("{} {}", ghi.repo_owner, ghi.repo_name);
 
@@ -87,14 +94,18 @@ async fn process(ghi: GitHubInfo) {
         discord_log::log(&format!(
             "ERROR Could not build image {}: {}",
             &ghi.bob_tag, err
-        )).await;
+        ))
+        .await;
         return;
     }
 
     discord_log::log(&format!(
         "INFO **[SUCCESS]** Built image {} successfully",
         &ghi.bob_tag
-    )).await;
+    ))
+    .await;
+
+    wh.success(&ghi.repo_name, &ghi.repo_owner).await;
 
     fs::remove_dir_all(repo_path).unwrap();
 

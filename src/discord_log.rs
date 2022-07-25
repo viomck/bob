@@ -14,11 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::env;
+use gethostname::gethostname;
 use lazy_static::lazy_static;
 use serde_json::json;
 use serenity::http;
 use serenity::http::Http;
+use std::env;
 
 lazy_static!(
     // (un/poorly-)documented behavior:  an empty/garbage token is fine for
@@ -26,7 +27,7 @@ lazy_static!(
     static ref CLIENT: Http = Http::new("");
 );
 
-pub async fn log_result(text: &str) -> serenity::Result<()> {
+async fn log_result(text: &str) -> serenity::Result<()> {
     eprintln!("{}", &text);
 
     let text = if text.len() > 2000 {
@@ -37,7 +38,8 @@ pub async fn log_result(text: &str) -> serenity::Result<()> {
 
     let value = json!({ "content": &text });
     let map = value.as_object().unwrap();
-    CLIENT.execute_webhook(get_webhook_id(), &get_webhook_token(), true, &map)
+    CLIENT
+        .execute_webhook(get_webhook_id(), &get_webhook_token(), true, &map)
         .await
         .map(|_| ())
 }
@@ -49,11 +51,19 @@ pub(crate) async fn log(text: &str) {
 }
 
 pub(crate) async fn hello_world() {
-    log_result("INFO I am awake!").await.unwrap();
+    log_result(&format!(
+        "INFO I am awake! ({})",
+        gethostname().to_str().unwrap()
+    ))
+    .await
+    .unwrap();
 }
 
 fn get_webhook_id() -> u64 {
-    env::var("DISCORD_WEBHOOK_ID").unwrap().parse::<u64>().unwrap()
+    env::var("DISCORD_WEBHOOK_ID")
+        .unwrap()
+        .parse::<u64>()
+        .unwrap()
 }
 
 fn get_webhook_token() -> String {

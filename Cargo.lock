@@ -98,9 +98,11 @@ version = "0.1.0"
 dependencies = [
  "dotenv",
  "futures",
+ "gethostname",
  "git2",
  "lazy_static 0.2.11",
  "octocrab",
+ "reqwest",
  "serde",
  "serde_json",
  "serenity",
@@ -413,6 +415,16 @@ checksum = "fd48d33ec7f05fbfa152300fdad764757cbded343c1aa1cff2fbaf4134851803"
 dependencies = [
  "typenum",
  "version_check",
+]
+
+[[package]]
+name = "gethostname"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1ebd34e35c46e00bb73e81363248d627782724609fe1b6396f553f68fe3862e"
+dependencies = [
+ "libc",
+ "winapi",
 ]
 
 [[package]]

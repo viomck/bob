@@ -92,7 +92,8 @@ impl GitHub {
                 owner_name,
                 repo.name,
                 content.items.len()
-            )).await;
+            ))
+            .await;
             return None;
         }
 
@@ -102,7 +103,8 @@ impl GitHub {
             discord_log::log(&format!(
                 "WARN {}/{}'s bob_tag.txt has no content",
                 owner_name, repo.name
-            )).await;
+            ))
+            .await;
             return None;
         }
 
@@ -129,7 +131,8 @@ impl GitHub {
                 discord_log::log(&format!(
                     "ERROR Could not get last commit for {}/{}/{}: {:?}",
                     owner_name, repo.name, default_branch, err
-                )).await;
+                ))
+                .await;
                 None
             }
             Ok(last_commit) => Some(GitHubInfo {
